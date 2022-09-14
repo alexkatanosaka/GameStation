@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.generation.gamestation.model.Categoria;
+import com.generation.gamestation.model.Produto;
 import com.generation.gamestation.repository.CategoriaRepository;
+import com.generation.gamestation.repository.ProdutoRepository;
 
 @RestController
 @RequestMapping("/categorias")
@@ -27,6 +29,7 @@ public class CategoriaController {
 	
 	@Autowired
 	CategoriaRepository categoriaRepository;
+	ProdutoRepository produtoRepository;
 	
 	@GetMapping
 	public ResponseEntity<List<Categoria>> getAll(){
@@ -50,19 +53,27 @@ public class CategoriaController {
 		
 	}
 	
+//	@PostMapping
+//	public ResponseEntity<Categoria> post(@Valid @RequestBody Categoria categoria){
+//		
+//		return ResponseEntity.status(HttpStatus.CREATED)
+//				.body(categoriaRepository.save(categoria));
+//		
+//	}
+	
 	@PostMapping
-	public ResponseEntity<Categoria> post(@Valid @RequestBody Categoria categoria){
-		
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(categoriaRepository.save(categoria));
-		
+    public ResponseEntity<Produto> salvarProdutos(@Valid @RequestBody Produto produto) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produtoModel));
+        return categoriaRepository.findById(produto.getCategoria().getId())
+                .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(produtoRepository.save(produto)))
+                .orElse(ResponseEntity.badRequest().build());
 	}
 	
 	@PutMapping
 	public ResponseEntity<Categoria> put (@Valid @RequestBody Categoria categoria){
 		
 		return categoriaRepository.findById(categoria.getId())
-				.map(respsota->ResponseEntity.status(HttpStatus.CREATED)
+				.map(resposta->ResponseEntity.status(HttpStatus.CREATED)
 				.body(categoriaRepository.save(categoria)))
 				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 		
